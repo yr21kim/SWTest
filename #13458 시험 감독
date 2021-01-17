@@ -1,0 +1,49 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int N, B, C;
+vector<int> A;
+vector<int> sol;
+
+int main() {
+
+	cin >> N;
+
+	for (int i = N; i--;) {
+		int Ai;
+		cin >> Ai;
+		A.push_back(Ai);
+	}
+
+	cin >> B >> C;
+
+	for (int i = 0; i < N; i++) {
+		int stu_num = A[i];
+		int sup_num = 0;
+		sup_num++; stu_num -= B;
+
+		if (stu_num > 0) {
+			//cout << stu_num << endl;
+			int quo = stu_num / C;
+			
+			int mod = stu_num % C;
+			//cout << quo << " " << mod << endl;
+			if (mod) quo++;
+			sup_num += quo;
+		}
+
+		sol.push_back(sup_num);
+		//cout << sol[i];
+	}
+
+
+	long long sum = 0;
+	for (int i = 0; i<sol.size(); i++)
+		sum += sol[i];
+
+	cout << sum;
+
+	return 0;
+}
