@@ -1,0 +1,68 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int S[8];
+int W[8];
+int N;
+int ans=0;
+int breaked[8];
+
+int count_breaked() {
+	int num = 0;
+	for (int i = 0; i < N; i++)
+		if (S[i] <= 0)
+			num++;
+
+	return num;
+}
+
+int solve(int n) {
+	if (n == N) {
+		return count_breaked();
+	}
+
+	if (breaked[n]) return solve(n+1);
+	if (n == N - 1 && count_breaked() == N - 1) return N-1;
+
+	for (int i = 0; i < N; i++) {
+		if (i == n) continue;
+		if (breaked[i]) continue;
+
+		S[i] -= W[n];
+		S[n] -= W[i];
+
+		int ii = breaked[i];
+		int in = breaked[n];
+
+		if (S[i] <= 0) breaked[i] = 1;
+		if (S[n] <= 0) breaked[n] = 1;
+
+		ans = max(ans, solve(n + 1));
+
+		S[i] += W[n];
+		S[n] += W[i];
+
+		breaked[i] = ii;
+		breaked[n] = in;
+
+	}
+
+	return ans;
+}
+
+
+int main() {
+	cin >> N;
+
+	for (int i = 0; i < N; i++) {
+			cin >> S[i];
+			cin >> W[i];
+	}
+
+	solve(0);
+	
+	cout << ans << endl;
+	return 0;
+}
