@@ -1,0 +1,135 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int n, m;
+
+int map[22][22]; // [H][N]
+
+
+int eat=0, time=0;
+
+struct fish { int s, x, y; };
+
+fish shark;
+
+int dx[4] = {-1, 1, 0, 0};//u d l r
+int dy[4] = { 0, 0, -1, 1 };
+
+bool comparefish(fish l, fish r) {
+	if (l.s < r.s)
+		return true;
+	else if (l.s > r.s)
+		return false;
+	else {
+		if (l.x < r.x)
+			return true;
+		else if (l.x > r.x)
+			return false;
+		else {
+			if (l.y < r.y)
+				return true;
+			else
+				return false;
+		}
+	}
+
+}
+
+
+void print_map() {
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++)
+			cout << map[i][j];
+		cout << endl;
+	}
+}
+
+
+void solve() {
+	int visit[22][22];
+
+	for (int i = 0; i < 22; i++) {
+		for (int j = 0; j < 22; j++)
+			visit[i][j] = 0;
+	}
+	
+	vector<fish> fishes;
+
+	queue<fish> q;
+
+	q.push({ 0, shark.x, shark.y });
+
+	while (!q.empty()) {
+		int s = q.front().s, x = q.front().x, y = q.front().y;
+
+		q.pop();
+
+		if (map[x][y] != 0 && map[x][y] < shark.s)
+		{
+			fishes.push_back({ s, x, y });
+		}
+
+		for (int i = 4; i--;) {
+			int nx = x + dx[i], ny = y + dy[i];
+
+			if ( nx > 0 && nx <= n && ny > 0 && ny <= n && map[nx][ny] <= shark.s && !visit[nx][ny]) {
+				q.push({ s+1, nx, ny });
+				visit[nx][ny] = 1;
+			}
+		}
+	}
+
+	if (!fishes.size())
+		return;
+
+	sort(fishes.begin(), fishes.end(), comparefish);
+	
+
+
+
+	//move shark
+	fish target = { fishes[0].s, fishes[0].x, fishes[0].y };
+	shark.x = target.x;
+	shark.y = target.y;
+	time += target.s;
+
+	//eat fish
+	eat++;
+	if (eat == shark.s) {
+		shark.s += 1;
+		eat = 0;
+	}
+	map[shark.x][shark.y] = 0;
+
+	solve();
+
+}
+
+int main() {
+
+	cin >> n;
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			int val;
+			cin >> val;
+			if(val == 9)
+				shark = { 2, i, j };
+			else {
+				map[i][j] = val;
+				//if (val != 0)
+					//fish.push_back({ i, j, val });
+			}
+			
+		}
+	}
+	
+	solve();
+
+	cout << time << endl;
+	return 0;
+}
