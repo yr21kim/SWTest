@@ -1,0 +1,198 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+int map[10][10];
+
+int dx[4] = { -1, 1, 0, 0 };
+int dy[4] = { 0, 0, -1, 1 };
+
+int N, M, ans=11;
+
+struct xy { int x, y; };
+
+xy red, blue, hole;
+
+void print_map() {
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < M; j++) {
+			if (i == red.x && j == red.y) cout << "R";
+			else if (i == blue.x&&j == blue.y)cout << "B";
+			else if (i == hole.x && j == hole.y) cout << "O";
+			else
+				cout << map[i][j];
+		}
+		cout << endl;
+	}
+}
+
+//up, down, left, right
+void move(int dir) {
+	bool rfirst;
+	
+	if (dir == 0) {
+		rfirst = red.x < blue.x;
+	}
+	else if (dir == 1) {
+		rfirst = red.x > blue.x;
+	}
+	else if (dir == 2) {
+		rfirst = red.y < blue.y;
+	}
+	else {
+		rfirst = red.y > blue.y;
+	}
+
+	if (rfirst) {
+		while (1) {
+			int nx = red.x + dx[dir];
+			int ny = red.y + dy[dir];
+			if (map[nx][ny] == 1) {
+				break;
+			}
+			else if (nx == hole.x && ny == hole.y) {
+				map[red.x][red.y] = 0;
+				red.x = nx;
+				red.y = ny;
+				break;
+			}
+			else {
+				map[red.x][red.y] = 0;
+				red.x = nx;
+				red.y = ny;
+				map[red.x][red.y] = 1;
+			}
+		}
+
+		while (1) {
+			int nx = blue.x + dx[dir];
+			int ny = blue.y + dy[dir];
+			if (map[nx][ny] == 1) {
+				break;
+			}
+			else if (nx == hole.x && ny == hole.y) {
+				map[blue.x][blue.y] = 0;
+				blue.x = nx;
+				blue.y = ny;
+				break;
+			}
+			else {
+				map[blue.x][blue.y] = 0;
+				blue.x = nx;
+				blue.y = ny;
+				map[blue.x][blue.y] = 1;
+			}
+		}
+	}
+	else {
+		while (1) {
+			int nx = blue.x + dx[dir];
+			int ny = blue.y + dy[dir];
+			if (map[nx][ny] == 1) {
+				break;
+			}
+			else if (nx == hole.x && ny == hole.y) {
+				map[blue.x][blue.y] = 0;
+				blue.x = nx;
+				blue.y = ny;
+				break;
+			}
+			else {
+				map[blue.x][blue.y] = 0;
+				blue.x = nx;
+				blue.y = ny;
+				map[blue.x][blue.y] = 1;
+			}
+		}
+
+		while (1) {
+			int nx = red.x + dx[dir];
+			int ny = red.y + dy[dir];
+			if (map[nx][ny] == 1) {
+				break;
+			}
+			else if (nx == hole.x && ny == hole.y) {
+				map[red.x][red.y] = 0;
+				red.x = nx;
+				red.y = ny;
+				break;
+			}
+			else {
+				map[red.x][red.y] = 0;
+				red.x = nx;
+				red.y = ny;
+				map[red.x][red.y] = 1;
+			}
+		}
+	}
+}
+
+int solve(int n) {
+	if (n == 10) return ans;
+
+	int rx = red.x, ry = red.y, bx = blue.x, by = blue.y;
+
+	for (int dir = 0; dir < 4; dir++) {
+		move(dir);
+
+		if (blue.x != hole.x || blue.y != hole.y) {
+			if (red.x == hole.x && red.y == hole.y) {
+				if (ans > n + 1)
+					ans = n + 1;
+				return ans;
+			}
+			if (red.x != rx || red.y != ry || blue.x != bx || blue.y != by) {
+				solve(n + 1);
+			}
+		}
+
+		map[blue.x][blue.y] = 0;
+		map[bx][by] = 1;
+		map[red.x][red.y] = 0;
+		map[rx][ry] = 1;
+
+		blue.x = bx; blue.y = by;
+		red.x = rx; red.y = ry;
+	}
+
+	return ans;
+}
+
+int main() {
+
+	cin >> N >> M;
+
+	for (int i = 0; i < N; i++) {
+		string line;
+		cin >> line;
+		for (int j = 0; j < M; j++) {
+			char c = line[j];
+			if (c == '#')
+				map[i][j] = 1;
+			else if (c == 'B') {
+				map[i][j] = 1;
+				blue = { i,j };
+			}
+			else if (c == 'R') {
+				map[i][j] = 1;
+				red = { i,j };
+			}
+			else if (c == 'O') {
+				hole = { i,j };
+			}
+		}
+	}
+
+	solve(0);
+
+	if (ans > 10)
+		cout << -1;
+	else
+		cout << ans;
+
+	return 0;
+}
