@@ -1,0 +1,33 @@
+#include <iostream>
+
+using namespace std;
+
+int main(){
+    int N;
+    cin >> N;
+    int max=2*N-1;
+    
+    for(int i=1; i<=max; i++){
+        if(i<=N){
+            int cur=2*i-1;
+            int blank = max-cur;
+            blank/=2;
+            for(int j=1; j<=blank; j++)
+                cout<<" ";
+            for(int j=1; j<=cur; j++)
+                cout<<"*";
+        }
+        else{
+            int di = max-i+1;
+            int cur=2*di -1;
+            int blank = max-cur;
+            blank/=2;
+            for(int j=1; j<=blank; j++)
+                cout<<" ";
+            for(int j=1; j<=cur; j++)
+                cout<<"*";
+        }
+        cout<<endl;
+    }
+    return 0;
+}
