@@ -1,0 +1,62 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int mat[101][101]; //(y,x)
+int dx[4] = {1,0,-1,0};
+int dy[4] = {0,-1,0,1};
+
+void func(int x, int y, int d, int g){
+
+        vector<int> dir; //0:right 1:up 2:left 3:down
+        int px = x, py = y;
+        for(int i=0; i<=g; i++){
+                int size = dir.size();
+                if(i==0){
+                        dir.push_back(d);
+                        mat[y][x] = 1;
+                }
+                else{
+                        for(int j=size-1; j>=0; j--){
+                                dir.push_back((dir[j]+1)%4);
+                        }
+                }
+                int inc = dir.size();
+                for(int j=0; j<inc-size; j++){
+                        int cur = dir[size+j];
+                        int cx = px+dx[cur], cy = py+dy[cur];
+                        if(x>=0&&x<=100&&y>=0&&y<=100){
+                                mat[cy][cx] = 1;
+                        }
+                        px = cx;
+                        py = cy;
+                }
+        }
+}
+int main(){
+        int N;
+        cin >> N;
+        for(int i=0; i<N; i++){
+                int x, y, d, g;
+                cin >> x;
+                cin >> y;
+                cin >> d;
+                cin >> g;
+
+                func(x,y,d,g);
+        }
+
+        int found = 0;
+        for(int i=0; i<100; i++){
+                for(int j=0; j<100; j++){
+                        if(mat[j][i] == 1){
+                                if(mat[j+1][i] == 1 && mat[j][i+1] == 1 && mat[j+1][i+1] == 1)
+                                        found++;
+                        }
+                }
+        }
+
+        cout<<found<<endl;
+
+        return 0;
+}
