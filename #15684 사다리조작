@@ -1,0 +1,67 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int N, M, H;
+
+int ladder[31][12]; // [H][N]
+
+int ans = 4;
+
+void solve(int s, int x, int y, vector<int> result) {
+	for (int i = x; i <= H; i++) {
+	//	cout << "i: " << i <<  " n: " << n << endl;
+		for (int j = (i == x ? y : 1); j < N; j++) {
+			if (ladder[i][j]) swap(result[j], result[j + 1]);
+			
+			if (s == 0 || ladder[i][j - 1] || ladder[i][j] || ladder[i][j + 1]) continue;
+			
+			ladder[i][j] = 1;
+			//cout << "added at: " << h << ", " << n << endl;
+			
+			swap(result[j], result[j + 1]);
+			
+			solve(s - 1, i, j + 2, result);
+
+			ladder[i][j] = 0;
+			swap(result[j], result[j + 1]);
+		}
+	}
+
+	for (int i = 1; i <= N; i++) {
+		if (result[i] != i)
+			return;
+	}
+	   
+	if (3 - s < ans) {
+		ans = 3 - s;
+	}
+}
+
+int main() {
+
+	cin >> N >> M >> H;
+
+	for (int i = 0; i < M; i++){
+		int a, b;
+		cin >> a >> b;
+
+		ladder[a][b] = 1;
+	}
+
+	vector<int> result(N+1);
+
+	for (int i = 1; i <= N; i++)
+		result[i] = i;
+	
+	solve(3, 1, 1, result);
+
+	//cout << "answer is: ";
+	if (ans < 4)
+		cout << ans;
+	else
+		cout << -1;
+
+	return 0;
+}
