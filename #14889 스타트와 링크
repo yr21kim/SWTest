@@ -1,0 +1,94 @@
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int n;
+
+int S[22][22]; // [H][N]
+
+int ans = 123456789;
+
+void print_map() {
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++)
+			cout << S[i][j];
+		cout << endl;
+	}
+}
+
+int sum_score(vector<int> team) {
+
+	int sum = 0;
+	for (int i = 0; i < n / 2; i++) {
+		for (int j = 0; j < n / 2; j++) {
+			sum += S[team[i]][team[j]];
+		}
+	}
+	return sum;
+}
+
+void solve(int c, vector<int> start, vector<int> link) {
+
+	if (start.size() == n / 2) {
+		for (int i = c; i <= n; i++)
+			link.push_back(i);
+		
+		int start_score = sum_score(start);
+		int link_score = sum_score(link);
+
+		int diff = abs(start_score - link_score);
+
+		if (diff < ans)
+			ans = diff;
+
+		return;
+	}
+	
+	if (link.size() == n / 2) {
+		for (int i = c; i <= n; i++)
+			start.push_back(i);
+		
+		int start_score = sum_score(start);
+		int link_score = sum_score(link);
+
+		int diff = abs(start_score - link_score);
+
+		if (diff < ans)
+			ans = diff;
+
+
+		return;
+	}
+
+	vector<int> new_start(start);
+	new_start.push_back(c);
+	vector<int> new_link(link);
+	new_link.push_back(c);
+
+	solve(c + 1, new_start, link);
+	solve(c + 1, start, new_link);
+
+}
+
+int main() {
+
+	cin >> n;
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= n; j++) {
+			cin >> S[i][j];
+		}
+	}
+
+	vector<int> start;
+	vector<int> link;
+	
+	solve(1, start, link);
+
+	cout << ans << endl;
+
+	return 0;
+}
