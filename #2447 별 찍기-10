@@ -1,0 +1,47 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+
+int mat[6561][6561];
+int N;
+
+void func(int n, int r, int c) {
+	if (n == 0) {
+		mat[r][c] = 1;
+		return;
+	}
+
+	int next = n - 1;
+	int space = pow(3, next);
+
+	func(next, r, c);
+	func(next, r, c + space);
+	func(next, r, c + space * 2);
+	func(next, r + space, c);
+	func(next, r + space, c + space * 2);
+	func(next, r + space * 2, c);
+	func(next, r + space * 2, c + space);
+	func(next, r + space * 2, c + space * 2);
+}
+
+
+int main() {
+	cin >> N;
+
+	int n = round(log(N) / log(3));
+	func(n, 0, 0);
+
+	//print matrix
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (mat[i][j] == 1) {
+				cout << "*";
+			}
+			else
+				cout << " ";
+		}
+		cout << endl;
+	}
+
+	return 0;
+}
