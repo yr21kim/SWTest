@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+int N, M, H;
+
+int ladder[31][12]; // [H][N]
+
+long long int max_res = -1234567890;
+long long int min_res = 1234567890;
+
+int num[11];
+int op[4];
+
+int l;
+
+long long int perform(int o, long long int cur_res, int cur_num) {
+	if (o == 0) { //plus
+		return cur_res + cur_num;
+	}
+	else if (o == 1) {
+		return cur_res - cur_num;
+	}
+	else if (o == 2) {
+		return cur_res * cur_num;
+	}
+	else {
+		if (cur_res >= 0) return cur_res / cur_num;
+		else return -(-cur_res / cur_num);
+	}
+}
+
+void solve(int n, long long int cur_res, int cur_op[4]) {
+	
+	if (n == l) {
+		if (max_res < cur_res)
+			max_res = cur_res;
+		if (min_res > cur_res)
+			min_res = cur_res;
+		return;
+	}
+
+	for (int i = 4; i--;) {
+		if (cur_op[i] < op[i]) {
+			cur_op[i]++;
+			solve(n + 1, perform(i, cur_res, num[n]), cur_op);
+			cur_op[i]--;
+		}
+	}
+}
+
+int main() {
+
+	cin >> l;
+
+	for (int i = 0; i < l; i++)
+		cin >> num[i];
+
+	for (int i = 0; i < 4; i++)
+		cin >> op[i]; //plus minus mul div
+	
+	int cur_op[4] = { 0,0,0,0 };
+
+	solve(1, num[0], cur_op);
+
+	cout << max_res << endl;
+	cout << min_res << endl;
+
+	return 0;
+}
